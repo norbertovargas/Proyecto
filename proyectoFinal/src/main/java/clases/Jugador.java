@@ -15,7 +15,7 @@ public class Jugador {
     private byte acciones;//solo se permiten 3 acciones por turno, ya sea sacar nuevas cartas o atacar con las que se tienen
     private Carta[] mazo;
 
-    public Jugador(byte acciones, Carta[] mazo) {
+    public Jugador(Carta[] mazo) {
         this.mana = 10;
         this.vida = 50;
         this.acciones = 3;
