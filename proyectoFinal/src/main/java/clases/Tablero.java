@@ -14,13 +14,13 @@ public class Tablero {
     private byte vida;
     private byte escudo;
     private Carta[] mano;
-    private Carta[] juego;
+    private Carta[] mesa;
 
-    public Tablero() {
+    public Tablero(Carta[] mano, Personaje[] mesa) {
         this.vida = 30;
         this.escudo = 0;
         this.mano = new Carta[3];
-        this.juego = new Carta[5];
+        this.mesa = new Carta[5];
 
     }
 
@@ -36,8 +36,8 @@ public class Tablero {
         return mano;
     }
 
-    public Carta[] getJuego() {
-        return juego;
+    public Carta[] setMesa() {
+        return mesa;
     }
 
     public void setVida(byte vida) {
@@ -52,8 +52,8 @@ public class Tablero {
         this.mano = mano;
     }
 
-    public void setJuego(Carta[] juego) {
-        this.juego = juego;
+    public void setMesa(Carta[] mesa) {
+        this.mesa = mesa;
     }
 
     

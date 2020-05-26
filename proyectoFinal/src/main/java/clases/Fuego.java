@@ -9,11 +9,12 @@ package clases;
  *
  * @author Norberto
  */
-public class Fuego extends Hechizo{
+public class Fuego extends Hechizo {
+
     private final byte daño;
 
     public Fuego() {
-        super((byte)8);
+        super((byte) 8);
         this.daño = 3;
     }
 
@@ -21,8 +22,17 @@ public class Fuego extends Hechizo{
         return daño;
     }
 
-    public static void usar() {
-        
+    public void usar(Personaje[] mesa) {
+        for (int i = 0; i < mesa.length; i++) {
+            if (mesa[i] != null) {
+                mesa[i].setVida((byte) (mesa[i].getVida() - 5));
+                if (mesa[i].getVida() <= 0) {
+                    mesa[i] = null;
+
+                }
+            }
+        }
+
     }
-    
+
 }

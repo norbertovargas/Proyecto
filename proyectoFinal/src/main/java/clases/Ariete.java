@@ -11,8 +11,8 @@ package clases;
  */
 public class Ariete extends Personaje {
 
-    private final byte escudo;
-    private final byte dañoEscudos;
+    private byte escudo;
+    private byte dañoEscudos;
 
     public Ariete() {
         super((byte) 1, (byte) 10, (byte) 1, (byte) 5);
@@ -26,6 +26,14 @@ public class Ariete extends Personaje {
 
     public byte getDañoEscudos() {
         return dañoEscudos;
+    }
+
+    public void setEscudo(byte escudo) {
+        this.escudo = escudo;
+    }
+
+    public void setDañoEscudos(byte dañoEscudos) {
+        this.dañoEscudos = dañoEscudos;
     }
 
 }
