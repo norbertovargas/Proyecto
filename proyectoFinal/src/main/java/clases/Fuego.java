@@ -17,8 +17,12 @@ public class Fuego extends Hechizo{
         this.daño = 3;
     }
 
-    public static void Usar() {
+    public byte getDaño() {
+        return daño;
+    }
 
+    public static void usar() {
+        
     }
     
 }

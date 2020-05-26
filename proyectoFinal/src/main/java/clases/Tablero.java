@@ -11,21 +11,21 @@ package clases;
  */
 public class Tablero {
 
-    private byte base;
+    private byte vida;
     private byte escudo;
     private Carta[] mano;
     private Carta[] juego;
 
     public Tablero() {
-        this.base = 30;
+        this.vida = 30;
         this.escudo = 0;
         this.mano = new Carta[3];
         this.juego = new Carta[5];
 
     }
 
-    public byte getBase() {
-        return base;
+    public byte getVida() {
+        return vida;
     }
 
     public byte getEscudo() {
@@ -40,8 +40,8 @@ public class Tablero {
         return juego;
     }
 
-    public void setBase(byte base) {
-        this.base = base;
+    public void setVida(byte vida) {
+        this.vida = vida;
     }
 
     public void setEscudo(byte escudo) {
@@ -55,5 +55,7 @@ public class Tablero {
     public void setJuego(Carta[] juego) {
         this.juego = juego;
     }
+
+    
 
 }

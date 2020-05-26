@@ -15,8 +15,4 @@ public class Luchador extends Personaje {
         super((byte) 3, (byte) 10, (byte) 5, (byte) 3);
     }
 
-    public static void Atacar(byte vidaObjetivo, byte escudoObjetivo){
-    
-    
-    }
 }

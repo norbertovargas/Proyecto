@@ -41,8 +41,8 @@ public class Main {
         Carta[] mano1 = new Carta[3];
         Carta[] mano2 = new Carta[3];
 
-        Carta[] mesa1 = new Carta[5];
-        Carta[] mesa2 = new Carta[5];
+        Personaje[] mesa1 = new Personaje[5];
+        Personaje[] mesa2 = new Personaje[5];
 
         Carta[] mazo1 = new Carta[5];
 
@@ -86,15 +86,16 @@ public class Main {
         
          */
         byte opcion;
-        while (j1.getVida() > 0 || j2.getVida() > 0) {
 
+        while (t1.getVida() > 0 || t2.getVida() > 0) {
+            System.out.println("Elige una opcion:");
             opcion = sc.nextByte();
             switch (opcion) {
                 case 1:
-                    invocarCarta(mano1, mesa1, j1);
+                    invocarCarta(mano1, mesa1, mazo1, j1);
                     break;
                 case 2:
-                    usarCarta();
+                    usarCarta(mesa1, mesa2, t1, t2);
                     break;
                 case 3:
                     //saltarTruno;
@@ -103,6 +104,14 @@ public class Main {
 
             }
 
+        }
+
+    }
+
+    private static void inicializarTablero(Carta[] tablero) {
+
+        for (int i = 0; i < tablero.length; i++) {
+            tablero[i] = null;
         }
 
     }
@@ -120,15 +129,7 @@ public class Main {
 
     }
 
-    private static void inicializarTablero(Carta[] tablero) {
-
-        for (int i = 0; i < tablero.length; i++) {
-            tablero[i] = null;
-        }
-
-    }
-
-    private static void invocarCarta(Carta[] mano, Carta[] mesa, Jugador j) {
+    private static void invocarCarta(Carta[] mano, Personaje[] mesa, Carta[] mazo, Jugador j) {
 
         Scanner sc = new Scanner(System.in);
 
@@ -136,34 +137,80 @@ public class Main {
 
         System.out.println("cartas en mano:");
         for (int i = 0; i < mano.length; i++) {
-            System.out.println(i + ": " + mano[i].getClass());
+            System.out.println(mano[i].getClass().getName());
         }
 
         System.out.println("elige la carta a invocar");
         do {
             uso = sc.nextByte();
-            if (mano[uso].getCosto()>j.getMana()) {
-                System.out.println("No tienes suficiente mana para esta carta");
-            }else if(uso < 0 || uso > 2){
+            if (uso < 0 || uso > 2) {
                 System.out.println("No es una carta valida");
+            } else if (mano[uso].getCosto() > j.getMana()) {
+                System.out.println("No tienes suficiente mana para esta carta");
             }
-            
-        } while (uso < 0 || uso > 2||mano[uso].getCosto()>j.getMana());
-        
-        j.setMana((byte) (j.getMana()-mano[uso].getCosto()));
-        
+
+        } while (uso < 0 || uso > 2 || mano[uso].getCosto() > j.getMana());
+
+        j.setMana((byte) (j.getMana() - mano[uso].getCosto()));
+        System.out.println("has usado: " + mano[uso].getCosto());
+        System.out.println("te quedan: " + j.getMana());
+
         for (int i = 0; i < mesa.length; i++) {
-            if (mesa[i]!=null) {
-                mesa[i]=mano[uso];
-                
+            if (mesa[i] == null) {
+                switch (mano[uso].getClass().getCanonicalName()) {
+                    case "clases.Arquero":
+                        mesa[i] = new Arquero();
+                        System.out.println(mesa[i].getClass().getCanonicalName());
+                        break;
+                    case "clases.Luchador":
+                        mesa[i] = new Luchador();
+                        System.out.println(mesa[i].getClass().getCanonicalName());
+                        break;
+                    case "class clases.Ariete":
+                        mesa[i] = new Ariete();
+                        System.out.println(mesa[i].getClass().getCanonicalName());
+                        break;
+                    default:
+                        break;
+                }
+                break;
+
             }
-            
         }
+        mano[uso] = null;
+
+        rellenarMano(mano, mazo);
+
+        j.setMana((byte) (j.getMana() + 3));
+
+        j.setAcciones((byte) (j.getAcciones() - 1));
 
     }
 
-    private static void saltarTurno(byte acciones) {
+    private static void usarCarta(Personaje[] mesaAtaque, Personaje[] mesaDefensa, Tablero t1, Tablero t2) {
+        Scanner sc = new Scanner(System.in);
 
+        System.out.println("A quien atacas?");
+        byte ataque;
+        
+        System.out.println("0-Nexo enemigo: " + t2.getVida()+" Escudo: "+t2.getEscudo());
+        for (int i = 0; i < mesaDefensa.length; i++) {
+            if (mesaDefensa[i] != null) {
+                System.out.println((i + 1) + "-"+mesaDefensa[i].getClass().getCanonicalName() + mesaDefensa[i].getVida());
+            }
+        }
+        ataque = sc.nextByte();
+        System.out.println("Con quien atacas");
+        for (int i = 0; i < mesaAtaque.length; i++) {
+            if (mesaAtaque[i] != null) {
+                System.out.println(i + ": " + mesaAtaque[i].getClass());
+            }
+        }
+
+        byte op;
+        op = sc.nextByte();
+        mesaAtaque[op].atacarBase(t2);
+        System.out.println(t2.getVida());
     }
 
 }

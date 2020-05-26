@@ -15,10 +15,7 @@ public class Arquero extends Personaje{
         super((byte)3, (byte)5, (byte)3, (byte)2);
     }
     
-    public static void Atacar(byte vidaObjetivo, byte escudoObjetivo){
     
-    
-    }
     
     
 }

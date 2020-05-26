@@ -28,9 +28,4 @@ public class Ariete extends Personaje {
         return dañoEscudos;
     }
 
-    public static void Atacar(byte vidaObjetivo, byte escudoObjetivo){
-    
-    
-    }
-
 }
