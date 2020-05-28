@@ -13,16 +13,17 @@ import java.util.Scanner;
  * @author Norberto
  *
  * TABLERO(2 bases con 30 vida y 0 escudo en inicio(10 max), max 3 cartas en
- * mano, max 5 personajes en juego) JUGADOR(mazo(5 cartas), max 3 acciones por
+ * mano, max 5 personajes en juego) 
+ * JUGADOR(mazo(5 cartas), max 3 acciones por
  * turno, 10 mana maximo(relleno al inicio), regenera 3 mana por turno)
  *
- * CARTA PERSONAJE(invocables) ARQUERO{ Datos(3 usos, 5 vida, 2 mana) Uso(-3
- * vida) } LUCHADOR{ Datos(3 usos, 10 vida, 3 mana) Uso(-5 vida(escudo si
- * tiene)) } ARIETE{ Datos(1 uso, 10 escudo, 10 vida, 5 mana) Uso(-10 escudo, -
- * 1 vida) }
+ * CARTA PERSONAJE(invocables) 
+ * ARQUERO{ Datos(3 usos, 5 vida, 2 mana) Uso(-3 vida) } 
+ * LUCHADOR{ Datos(3 usos, 10 vida, 3 mana) Uso(-5 vida(escudo si tiene)) } 
+ * ARIETE{ Datos(1 uso, 10 escudo, 10 vida, 5 mana) Uso(-10 escudo, - 1 vida) }
  *
- * HECHIZO(1 solo uso) MURO(+5 escudo, 6 mana) FUEGO(-5 VIDA a todas las
- * unidades, 8 mana)
+ * HECHIZO(1 solo uso) MURO(+5 escudo, 6 mana) 
+ * FUEGO(-5 VIDA a todas las unidades, 8 mana)
  *
  */
 public class Main {
@@ -96,11 +97,11 @@ public class Main {
                 opcion = sc.nextByte();
                 switch (opcion) {
                     case 1:
-                        invocarCarta(mano1, mesa1, j1, mesa2);
+                        invocarCarta(mano1, mesa1, j1, mesa2, t1);
                         j1.setAcciones((byte) (j1.getAcciones() - 1));
                         break;
                     case 2:
-                        usarCarta(mesa1, mesa2, t2);
+                        usarCarta(mesa1, mesa2, t2, j1);
                         j1.setAcciones((byte) (j1.getAcciones() - 1));
                         break;
                     case 3:
@@ -125,11 +126,11 @@ public class Main {
                 opcion = sc.nextByte();
                 switch (opcion) {
                     case 1:
-                        invocarCarta(mano2, mesa2, j2, mesa1);
+                        invocarCarta(mano2, mesa2, j2, mesa1, t2);
                         j2.setAcciones((byte) (j2.getAcciones() - 1));
                         break;
                     case 2:
-                        usarCarta(mesa2, mesa1, t1);
+                        usarCarta(mesa2, mesa1, t1, j2);
                         j2.setAcciones((byte) (j2.getAcciones() - 1));
                         break;
                     case 3:
@@ -168,7 +169,7 @@ public class Main {
 
     }
 
-    private static void invocarCarta(Carta[] mano, Personaje[] mesa, Jugador j, Personaje[] mesaE) {
+    private static void invocarCarta(Carta[] mano, Personaje[] mesa, Jugador j, Personaje[] mesaE, Tablero t) {
 
         Scanner sc = new Scanner(System.in);
 
@@ -177,11 +178,13 @@ public class Main {
         System.out.println("cartas en mano:");
 
         for (int i = 0; i < mano.length; i++) {
-            System.out.println((i + 1) + "-" + mano[i].getClass().getName().substring(7) + "(" + mano[i].getCosto() + ")");
+            if (mano[i] != null) {
+                System.out.println((i + 1) + "-" + mano[i].getClass().getName().substring(7) + "(" + mano[i].getCosto() + ")");
+            }
         }
         System.out.println("0-Atras");
 
-        System.out.println("elige la carta a invocar");
+        System.out.println("Elige la carta a invocar");
         do {
             uso = (byte) (sc.nextByte() - 1);
             if (uso < -1 || uso > 2) {
@@ -204,6 +207,10 @@ public class Main {
                 f.usar(mesaE);
                 break;
             case "Muro":
+                Muro m = (Muro) mano[uso];
+                m.usar(t);
+                System.out.println(t.getEscudo());
+                
                 break;
             default:
                 for (int i = 0; i < mesa.length; i++) {
@@ -225,7 +232,6 @@ public class Main {
                                 break;
                         }
                         break;
-
                     }
                 }
                 break;
@@ -234,7 +240,18 @@ public class Main {
 
     }
 
-    private static void usarCarta(Personaje[] mesaAtaque, Personaje[] mesaDefensa, Tablero t) {
+    private static void usarCarta(Personaje[] mesaAtaque, Personaje[] mesaDefensa, Tablero t, Jugador j) {
+        boolean existe= false;
+        for (int i = 0; i < mesaAtaque.length; i++) {
+            if(mesaAtaque[i]!=null)
+                existe=true;
+        }
+        if(existe==false){
+            System.out.println("Primero tienes que invocar alguna carta");
+            j.setAcciones((byte)(j.getAcciones()+1));
+            return;
+        }
+        
         Scanner sc = new Scanner(System.in);
 
         System.out.println("¿A quien atacas?");
@@ -250,13 +267,13 @@ public class Main {
         System.out.println("Con quien atacas");
         for (int i = 0; i < mesaAtaque.length; i++) {
             if (mesaAtaque[i] != null) {
-                System.out.println(i + ": " + mesaAtaque[i].getClass());
+                System.out.println(i + ": " + mesaAtaque[i].getClass().getCanonicalName().substring(7));
             }
         }
 
         byte op;
         op = sc.nextByte();
-        if (op == 0) {
+        if (ataque == 0) {
             mesaAtaque[op].atacarBase(t);
             System.out.println(t.getVida());
         } else if (mesaDefensa[ataque].getClass().getCanonicalName().substring(7).equals("Ariete")) {

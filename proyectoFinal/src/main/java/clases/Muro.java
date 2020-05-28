@@ -10,15 +10,19 @@ package clases;
  * @author Norberto
  */
 public class Muro extends Hechizo {
-
+    
     private final byte escudo;
-
+    
     public Muro() {
         super((byte) 6);
         this.escudo = 5;
     }
-
-    public static void Usar() {
-
+    
+    public void usar(Tablero t) {
+        t.setEscudo((byte) (t.getEscudo() + 5));
+        if (t.getEscudo() > 10) {
+            t.setEscudo((byte) 10);
+            
+        }
     }
 }

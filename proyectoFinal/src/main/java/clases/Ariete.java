@@ -36,4 +36,8 @@ public class Ariete extends Personaje {
         this.dañoEscudos = dañoEscudos;
     }
 
+    public void atacarBase(Tablero t){
+        t.setEscudo((byte)0);
+    
+    }
 }
