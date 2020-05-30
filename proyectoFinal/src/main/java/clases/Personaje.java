@@ -64,6 +64,7 @@ public class Personaje extends Carta {
     
     public void atacarUnidad(Personaje p) {
         p.setVida((byte) (p.getVida() - daño));
+        System.out.println("Vida: "+p.getVida());
         
     }
     

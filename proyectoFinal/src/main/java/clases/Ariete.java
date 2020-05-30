@@ -38,6 +38,7 @@ public class Ariete extends Personaje {
 
     public void atacarBase(Tablero t){
         t.setEscudo((byte)0);
+        t.setVida((byte)(t.getVida()-1));
     
     }
 }

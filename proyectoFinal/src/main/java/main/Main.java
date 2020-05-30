@@ -226,7 +226,7 @@ public class Main {
                                 mesa[i] = new Luchador();
                                 System.out.println(mano[uso].getClass().getCanonicalName().substring(7)+" invocado");
                                 break;
-                            case "class clases.Ariete":
+                            case "clases.Ariete":
                                 mesa[i] = new Ariete();
                                 System.out.println(mano[uso].getClass().getCanonicalName().substring(7)+" invocado");
                                 break;
@@ -279,17 +279,17 @@ public class Main {
         if (ataque == 0) {
             mesaAtaque[op].atacarBase(t);
             System.out.println(t.getVida());
-        } else if (mesaDefensa[ataque].getClass().getCanonicalName().substring(7).equals("Ariete")) {
-            mesaAtaque[op].atacarUnidad((Ariete) mesaDefensa[ataque]);
-            if (mesaDefensa[ataque].getVida() < 1) {
-                mesaDefensa[ataque] = null;
+        } else if ("Ariete".equals(mesaDefensa[ataque-1].getClass().getCanonicalName().substring(7))) {
+            mesaAtaque[op].atacarUnidad((Ariete) mesaDefensa[ataque-1]);
+            if (mesaDefensa[ataque-1].getVida() < 1) {
+                mesaDefensa[ataque-1] = null;
 
             }
 
         } else {
-            mesaAtaque[op].atacarUnidad(mesaDefensa[ataque]);
-            if (mesaDefensa[ataque].getVida() < 1) {
-                mesaDefensa[ataque] = null;
+            mesaAtaque[op].atacarUnidad(mesaDefensa[ataque-1]);
+            if (mesaDefensa[ataque-1].getVida() < 1) {
+                mesaDefensa[ataque-1] = null;
 
             }
         }
@@ -298,7 +298,7 @@ public class Main {
             mesaAtaque[op] = null;
 
         }
-        System.out.println(t.getVida());
+        
     }
 
 }
