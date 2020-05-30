@@ -24,5 +24,6 @@ public class Muro extends Hechizo {
             t.setEscudo((byte) 10);
             
         }
+        System.out.println("Escudo actual: "+t.getEscudo());
     }
 }

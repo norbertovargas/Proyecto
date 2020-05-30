@@ -13,17 +13,16 @@ import java.util.Scanner;
  * @author Norberto
  *
  * TABLERO(2 bases con 30 vida y 0 escudo en inicio(10 max), max 3 cartas en
- * mano, max 5 personajes en juego) 
- * JUGADOR(mazo(5 cartas), max 3 acciones por
+ * mano, max 5 personajes en juego) JUGADOR(mazo(5 cartas), max 3 acciones por
  * turno, 10 mana maximo(relleno al inicio), regenera 3 mana por turno)
  *
- * CARTA PERSONAJE(invocables) 
- * ARQUERO{ Datos(3 usos, 5 vida, 2 mana) Uso(-3 vida) } 
- * LUCHADOR{ Datos(3 usos, 10 vida, 3 mana) Uso(-5 vida(escudo si tiene)) } 
- * ARIETE{ Datos(1 uso, 10 escudo, 10 vida, 5 mana) Uso(-10 escudo, - 1 vida) }
+ * CARTA PERSONAJE(invocables) ARQUERO{ Datos(3 usos, 5 vida, 2 mana) Uso(-3
+ * vida) } LUCHADOR{ Datos(3 usos, 10 vida, 3 mana) Uso(-5 vida(escudo si
+ * tiene)) } ARIETE{ Datos(1 uso, 10 escudo, 10 vida, 5 mana) Uso(-10 escudo, -
+ * 1 vida) }
  *
- * HECHIZO(1 solo uso) MURO(+5 escudo, 6 mana) 
- * FUEGO(-5 VIDA a todas las unidades, 8 mana)
+ * HECHIZO(1 solo uso) MURO(+5 escudo, 6 mana) FUEGO(-5 VIDA a todas las
+ * unidades, 8 mana)
  *
  */
 public class Main {
@@ -72,25 +71,12 @@ public class Main {
 
         inicializarTablero(mesa2);
 
-        /*
-        System.out.println("Introduce el numero de cartas de cada tipo para J1(max 5)");
-        System.out.println("Luchadores:");
-        System.out.println("Quedan "+max+" cartas por elegir");
-        System.out.println("Arqueros:");
-        System.out.println("Quedan "+max+" cartas por elegir");
-        System.out.println("Arietes:");
-        System.out.println("Quedan "+max+" cartas por elegir");
-        System.out.println("Muros:");
-        System.out.println("Quedan "+max+" cartas por elegir");
-        System.out.println("Fuegos:");
-        
-         */
         byte opcion;
 
         while (t1.getVida() > 0 || t2.getVida() > 0) {
             System.out.println("Juega J1");
             do {
-                System.out.println("Elige una opcion:");
+                System.out.println("Elige una opcion, turnos restantes "+j1.getAcciones());
                 System.out.println("\t1-Invocar Carta");
                 System.out.println("\t2-Usar Carta");
                 System.out.println("\t3-Saltar Turno");
@@ -119,7 +105,7 @@ public class Main {
 
             System.out.println("Juega J2");
             do {
-                System.out.println("Elige una opcion:");
+                System.out.println("Elige una opcion, turnos restantes "+j2.getAcciones());
                 System.out.println("\t1-Invocar Carta");
                 System.out.println("\t2-Usar Carta");
                 System.out.println("\t3-Saltar Turno");
@@ -141,6 +127,7 @@ public class Main {
                 }
 
             } while (j2.getAcciones() > 0);
+            rellenarMano(mano2, j2.getMazo());
             j2.setAcciones((byte) 3);
             j2.setMana((byte) (j2.getMana() + 3));
 
@@ -171,6 +158,18 @@ public class Main {
 
     private static void invocarCarta(Carta[] mano, Personaje[] mesa, Jugador j, Personaje[] mesaE, Tablero t) {
 
+        boolean lleno = true;
+        for (int i = 0; i < mesa.length; i++) {
+            if (mesa[i] == null) {
+                lleno = false;
+            }
+        }
+        if (lleno) {
+            System.out.println("Tu mesa esta llena");
+            j.setAcciones((byte) (j.getAcciones() + 1));
+            return;
+        }
+
         Scanner sc = new Scanner(System.in);
 
         byte uso;
@@ -179,24 +178,27 @@ public class Main {
 
         for (int i = 0; i < mano.length; i++) {
             if (mano[i] != null) {
-                System.out.println((i + 1) + "-" + mano[i].getClass().getName().substring(7) + "(" + mano[i].getCosto() + ")");
+                System.out.println((i) + "-" + mano[i].getClass().getName().substring(7) + "(" + mano[i].getCosto() + ")");
             }
         }
-        System.out.println("0-Atras");
+        System.out.println("3-Atras");
 
         System.out.println("Elige la carta a invocar");
+
         do {
-            uso = (byte) (sc.nextByte() - 1);
-            if (uso < -1 || uso > 2) {
+            uso = sc.nextByte();
+            if (uso < 0 || uso > 3) {
                 System.out.println("No es una opcion valida");
-            } else if (mano[uso].getCosto() > j.getMana()) {
-                System.out.println("No tienes suficiente mana para esta carta");
-            } else if (uso == -1) {
+            } else if (uso == 3) {
                 j.setAcciones((byte) (j.getAcciones() + 1));
                 return;
+            } else if (mano[uso] == null) {
+                System.out.println("El slot esta vacio, escoge otra carta");
+            } else if (mano[uso].getCosto() > j.getMana()) {
+                System.out.println("No tienes suficiente mana para esta carta, elige otra");
             }
 
-        } while (uso < 0 || uso > 2 || mano[uso].getCosto() > j.getMana());
+        } while (uso < 0 || uso > 3 || mano[uso] == null || mano[uso].getCosto() > j.getMana());
 
         j.setMana((byte) (j.getMana() - mano[uso].getCosto()));
         System.out.println("Mana restante: " + j.getMana());
@@ -209,8 +211,8 @@ public class Main {
             case "Muro":
                 Muro m = (Muro) mano[uso];
                 m.usar(t);
-                System.out.println(t.getEscudo());
-                
+                System.out.println("Escudo actual: "+t.getEscudo());
+
                 break;
             default:
                 for (int i = 0; i < mesa.length; i++) {
@@ -218,15 +220,15 @@ public class Main {
                         switch (mano[uso].getClass().getCanonicalName()) {
                             case "clases.Arquero":
                                 mesa[i] = new Arquero();
-                                System.out.println(mano[uso].getClass().getCanonicalName().substring(7));
+                                System.out.println(mano[uso].getClass().getCanonicalName().substring(7)+" invocado");
                                 break;
                             case "clases.Luchador":
                                 mesa[i] = new Luchador();
-                                System.out.println(mano[uso].getClass().getCanonicalName().substring(7));
+                                System.out.println(mano[uso].getClass().getCanonicalName().substring(7)+" invocado");
                                 break;
                             case "class clases.Ariete":
                                 mesa[i] = new Ariete();
-                                System.out.println(mano[uso].getClass().getCanonicalName().substring(7));
+                                System.out.println(mano[uso].getClass().getCanonicalName().substring(7)+" invocado");
                                 break;
                             default:
                                 break;
@@ -241,17 +243,18 @@ public class Main {
     }
 
     private static void usarCarta(Personaje[] mesaAtaque, Personaje[] mesaDefensa, Tablero t, Jugador j) {
-        boolean existe= false;
+        boolean existe = false;
         for (int i = 0; i < mesaAtaque.length; i++) {
-            if(mesaAtaque[i]!=null)
-                existe=true;
+            if (mesaAtaque[i] != null) {
+                existe = true;
+            }
         }
-        if(existe==false){
+        if (existe == false) {
             System.out.println("Primero tienes que invocar alguna carta");
-            j.setAcciones((byte)(j.getAcciones()+1));
+            j.setAcciones((byte) (j.getAcciones() + 1));
             return;
         }
-        
+
         Scanner sc = new Scanner(System.in);
 
         System.out.println("¿A quien atacas?");
@@ -267,7 +270,7 @@ public class Main {
         System.out.println("Con quien atacas");
         for (int i = 0; i < mesaAtaque.length; i++) {
             if (mesaAtaque[i] != null) {
-                System.out.println(i + ": " + mesaAtaque[i].getClass().getCanonicalName().substring(7));
+                System.out.println(i + ": " + mesaAtaque[i].getClass().getCanonicalName().substring(7)+"("+mesaAtaque[i].getUsos()+" usos)");
             }
         }
 
