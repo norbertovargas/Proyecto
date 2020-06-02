@@ -8,6 +8,12 @@ package main;
 import clases.*;
 import java.util.Random;
 import java.util.Scanner;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Arrays;
 
 /**
  * @author Norberto
@@ -32,51 +38,56 @@ public class Main {
      */
     public static void main(String[] args) {
 
-        Scanner sc = new Scanner(System.in);
+        consultarRegistro();
+        Scanner sc = new Scanner(System.in);//Declaro el escaner
 
+        //Declaro los arrays que contienen las cartas en mano de ambos jugadores
         Carta[] mano1 = new Carta[3];
         Carta[] mano2 = new Carta[3];
 
+        //Declaro los arrays que contienen las cartas en uso de ambos jugadores
         Personaje[] mesa1 = new Personaje[5];
         Personaje[] mesa2 = new Personaje[5];
 
+        //Inicializo ambos tableros con su mano y su mesa correspondiente
         Tablero t1 = new Tablero(mano1, mesa1);
         Tablero t2 = new Tablero(mano2, mesa2);
 
+        //Declaro el mazo del jugador 1 con una carta de cada tipo
         Carta[] mazo1 = new Carta[5];
-
         mazo1[0] = new Luchador();
         mazo1[1] = new Arquero();
         mazo1[2] = new Ariete();
         mazo1[3] = new Muro();
         mazo1[4] = new Fuego();
 
+        //Inicializo el jugador 1 con su mazo
         Jugador j1 = new Jugador(mazo1);
 
+        //Declaro el mazo del jugador 2 con una carta de cada tipo
         Carta[] mazo2 = new Carta[5];
-
         mazo2[0] = new Luchador();
         mazo2[1] = new Arquero();
         mazo2[2] = new Ariete();
         mazo2[3] = new Muro();
         mazo2[4] = new Fuego();
 
+        //Inicializo el jugador 1 con su mazo
         Jugador j2 = new Jugador(mazo2);
 
+        //Relleno las 2 manos para empezar el juego con las cartas de los mazos
         rellenarMano(mano1, mazo1);
 
         rellenarMano(mano2, mazo2);
 
-        inicializarTablero(mesa1);
-
-        inicializarTablero(mesa2);
-
+        //Declaro una variable que va a servir para elegir la opcion en el turno
         byte opcion;
 
+        //
         while (t1.getVida() > 0 || t2.getVida() > 0) {
             System.out.println("Juega J1");
             do {
-                System.out.println("Elige una opcion, turnos restantes "+j1.getAcciones());
+                System.out.println("Elige una opcion, turnos restantes " + j1.getAcciones());
                 System.out.println("\t1-Invocar Carta");
                 System.out.println("\t2-Usar Carta");
                 System.out.println("\t3-Saltar Turno");
@@ -99,13 +110,18 @@ public class Main {
 
             } while (j1.getAcciones() > 0);
 
+            if (t2.getVida() < 1) {
+                System.out.println("Gana J1");
+                registrarGanador(t1, "j1");
+                break;
+            }
             rellenarMano(mano1, j1.getMazo());
             j1.setAcciones((byte) 3);
-            j1.setMana((byte) (j1.getMana() + 3));
+            j1.aumentarMana();
 
             System.out.println("Juega J2");
             do {
-                System.out.println("Elige una opcion, turnos restantes "+j2.getAcciones());
+                System.out.println("Elige una opcion, turnos restantes " + j2.getAcciones());
                 System.out.println("\t1-Invocar Carta");
                 System.out.println("\t2-Usar Carta");
                 System.out.println("\t3-Saltar Turno");
@@ -127,22 +143,27 @@ public class Main {
                 }
 
             } while (j2.getAcciones() > 0);
+            if (t1.getVida() < 1) {
+                System.out.println("Gana J2");
+                registrarGanador(t2, "j2");
+                break;
+            }
             rellenarMano(mano2, j2.getMazo());
             j2.setAcciones((byte) 3);
-            j2.setMana((byte) (j2.getMana() + 3));
+            j2.aumentarMana();
+            
 
         }
+        System.out.println("Fin del juego");
 
     }
 
-    private static void inicializarTablero(Carta[] tablero) {
-
-        for (int i = 0; i < tablero.length; i++) {
-            tablero[i] = null;
-        }
-
-    }
-
+    /**
+     * Funcion que rellena la mano con 3 cartas aleatorias del mazo
+     *
+     * @param mano
+     * @param mazo
+     */
     private static void rellenarMano(Carta[] mano, Carta[] mazo) {
 
         Random rnd = new Random();
@@ -156,6 +177,14 @@ public class Main {
 
     }
 
+    /**
+     *
+     * @param mano
+     * @param mesa
+     * @param j
+     * @param mesaE
+     * @param t
+     */
     private static void invocarCarta(Carta[] mano, Personaje[] mesa, Jugador j, Personaje[] mesaE, Tablero t) {
 
         boolean lleno = true;
@@ -178,7 +207,7 @@ public class Main {
 
         for (int i = 0; i < mano.length; i++) {
             if (mano[i] != null) {
-                System.out.println((i) + "-" + mano[i].getClass().getName().substring(7) + "(" + mano[i].getCosto() + ")");
+                System.out.println((i) + "-" + mano[i].getClass().getSimpleName() + "(" + mano[i].getCosto() + ")");
             }
         }
         System.out.println("3-Atras");
@@ -203,7 +232,7 @@ public class Main {
         j.setMana((byte) (j.getMana() - mano[uso].getCosto()));
         System.out.println("Mana restante: " + j.getMana());
 
-        switch (mano[uso].getClass().getCanonicalName().substring(7)) {
+        switch (mano[uso].getClass().getSimpleName()) {
             case "Fuego":
                 Fuego f = (Fuego) mano[uso];
                 f.usar(mesaE);
@@ -211,24 +240,24 @@ public class Main {
             case "Muro":
                 Muro m = (Muro) mano[uso];
                 m.usar(t);
-                System.out.println("Escudo actual: "+t.getEscudo());
+                System.out.println("Escudo actual: " + t.getEscudo());
 
                 break;
             default:
                 for (int i = 0; i < mesa.length; i++) {
                     if (mesa[i] == null) {
-                        switch (mano[uso].getClass().getCanonicalName()) {
-                            case "clases.Arquero":
+                        switch (mano[uso].getClass().getSimpleName()) {
+                            case "Arquero":
                                 mesa[i] = new Arquero();
-                                System.out.println(mano[uso].getClass().getCanonicalName().substring(7)+" invocado");
+                                System.out.println(mano[uso].getClass().getSimpleName() + " invocado");
                                 break;
-                            case "clases.Luchador":
+                            case "Luchador":
                                 mesa[i] = new Luchador();
-                                System.out.println(mano[uso].getClass().getCanonicalName().substring(7)+" invocado");
+                                System.out.println(mano[uso].getClass().getSimpleName() + " invocado");
                                 break;
-                            case "clases.Ariete":
+                            case "Ariete":
                                 mesa[i] = new Ariete();
-                                System.out.println(mano[uso].getClass().getCanonicalName().substring(7)+" invocado");
+                                System.out.println(mano[uso].getClass().getSimpleName() + " invocado");
                                 break;
                             default:
                                 break;
@@ -242,6 +271,13 @@ public class Main {
 
     }
 
+    /**
+     *
+     * @param mesaAtaque
+     * @param mesaDefensa
+     * @param t
+     * @param j
+     */
     private static void usarCarta(Personaje[] mesaAtaque, Personaje[] mesaDefensa, Tablero t, Jugador j) {
         boolean existe = false;
         for (int i = 0; i < mesaAtaque.length; i++) {
@@ -263,14 +299,14 @@ public class Main {
         System.out.println("0-Nexo enemigo: " + t.getVida() + " Escudo: " + t.getEscudo());
         for (int i = 0; i < mesaDefensa.length; i++) {
             if (mesaDefensa[i] != null) {
-                System.out.println((i + 1) + "-" + mesaDefensa[i].getClass().getCanonicalName().substring(7) + "(" + mesaDefensa[i].getVida() + ")");
+                System.out.println((i + 1) + "-" + mesaDefensa[i].getClass().getSimpleName() + "(" + mesaDefensa[i].getVida() + ")");
             }
         }
         ataque = sc.nextByte();
         System.out.println("Con quien atacas");
         for (int i = 0; i < mesaAtaque.length; i++) {
             if (mesaAtaque[i] != null) {
-                System.out.println(i + ": " + mesaAtaque[i].getClass().getCanonicalName().substring(7)+"("+mesaAtaque[i].getUsos()+" usos)");
+                System.out.println(i + ": " + mesaAtaque[i].getClass().getSimpleName() + "(" + mesaAtaque[i].getUsos() + " usos)");
             }
         }
 
@@ -279,17 +315,17 @@ public class Main {
         if (ataque == 0) {
             mesaAtaque[op].atacarBase(t);
             System.out.println(t.getVida());
-        } else if ("Ariete".equals(mesaDefensa[ataque-1].getClass().getCanonicalName().substring(7))) {
-            mesaAtaque[op].atacarUnidad((Ariete) mesaDefensa[ataque-1]);
-            if (mesaDefensa[ataque-1].getVida() < 1) {
-                mesaDefensa[ataque-1] = null;
+        } else if ("Ariete".equals(mesaDefensa[ataque - 1].getClass().getCanonicalName().substring(7))) {
+            mesaAtaque[op].atacarUnidad((Ariete) mesaDefensa[ataque - 1]);
+            if (mesaDefensa[ataque - 1].getVida() < 1) {
+                mesaDefensa[ataque - 1] = null;
 
             }
 
         } else {
-            mesaAtaque[op].atacarUnidad(mesaDefensa[ataque-1]);
-            if (mesaDefensa[ataque-1].getVida() < 1) {
-                mesaDefensa[ataque-1] = null;
+            mesaAtaque[op].atacarUnidad(mesaDefensa[ataque - 1]);
+            if (mesaDefensa[ataque - 1].getVida() < 1) {
+                mesaDefensa[ataque - 1] = null;
 
             }
         }
@@ -298,7 +334,36 @@ public class Main {
             mesaAtaque[op] = null;
 
         }
-        
+
+    }
+
+    private static void consultarRegistro() {
+
+        try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/proyecto?useTimezone=true&serverTimezone=UTC", "programacion", "Programacion");
+                Statement smt = con.createStatement();
+                ResultSet rs = smt.executeQuery("select * from registro")) {
+            System.out.println("Ganador\tVida");
+            while (rs.next()) {
+                String ganador = rs.getString("ganador");
+                String vida = rs.getString("vida");
+                System.out.println(ganador + "\t" + vida);
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
+    private static void registrarGanador(Tablero t, String ganador) {
+
+        try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/proyecto?useTimezone=true&serverTimezone=UTC", "programacion", "Programacion");
+                Statement smt = con.createStatement()) {
+
+            int n = smt.executeUpdate("insert into registro values ('" + ganador + "','" + t.getVida() + "')");
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 
 }

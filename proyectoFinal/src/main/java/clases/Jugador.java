@@ -43,5 +43,12 @@ public class Jugador {
         this.mazo = mazo;
     }
     
+    public void aumentarMana(){
+        this.setMana((byte) (this.getMana()+3));
+        if (this.getMana()>10) {
+            this.setMana((byte) 10);
+            
+        }
     
+    }
 }
