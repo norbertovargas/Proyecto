@@ -13,7 +13,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
 
 /**
  * @author Norberto
@@ -188,7 +187,7 @@ public class Main {
     private static void invocarCarta(Carta[] mano, Personaje[] mesa, Jugador j, Personaje[] mesaE, Tablero t) {
 
         boolean lleno = true;
-        for (int i = 0; i < mesa.length; i++) {
+        for (byte i = 0; i < mesa.length; i++) {
             if (mesa[i] == null) {
                 lleno = false;
             }
@@ -203,9 +202,9 @@ public class Main {
 
         byte uso;
         System.out.println("Mana actual: " + j.getMana());
-        System.out.println("cartas en mano:");
+        System.out.println("Cartas en mano:");
 
-        for (int i = 0; i < mano.length; i++) {
+        for (byte i = 0; i < mano.length; i++) {
             if (mano[i] != null) {
                 System.out.println((i) + "-" + mano[i].getClass().getSimpleName() + "(" + mano[i].getCosto() + ")");
             }
@@ -240,11 +239,10 @@ public class Main {
             case "Muro":
                 Muro m = (Muro) mano[uso];
                 m.usar(t);
-                System.out.println("Escudo actual: " + t.getEscudo());
 
                 break;
             default:
-                for (int i = 0; i < mesa.length; i++) {
+                for (byte i = 0; i < mesa.length; i++) {
                     if (mesa[i] == null) {
                         switch (mano[uso].getClass().getSimpleName()) {
                             case "Arquero":
@@ -280,7 +278,7 @@ public class Main {
      */
     private static void usarCarta(Personaje[] mesaAtaque, Personaje[] mesaDefensa, Tablero t, Jugador j) {
         boolean existe = false;
-        for (int i = 0; i < mesaAtaque.length; i++) {
+        for (byte i = 0; i < mesaAtaque.length; i++) {
             if (mesaAtaque[i] != null) {
                 existe = true;
             }
@@ -297,14 +295,14 @@ public class Main {
         byte ataque;
 
         System.out.println("0-Nexo enemigo: " + t.getVida() + " Escudo: " + t.getEscudo());
-        for (int i = 0; i < mesaDefensa.length; i++) {
+        for (byte i = 0; i < mesaDefensa.length; i++) {
             if (mesaDefensa[i] != null) {
                 System.out.println((i + 1) + "-" + mesaDefensa[i].getClass().getSimpleName() + "(" + mesaDefensa[i].getVida() + ")");
             }
         }
         ataque = sc.nextByte();
         System.out.println("Con quien atacas");
-        for (int i = 0; i < mesaAtaque.length; i++) {
+        for (byte i = 0; i < mesaAtaque.length; i++) {
             if (mesaAtaque[i] != null) {
                 System.out.println(i + ": " + mesaAtaque[i].getClass().getSimpleName() + "(" + mesaAtaque[i].getUsos() + " usos)");
             }
@@ -314,7 +312,7 @@ public class Main {
         op = sc.nextByte();
         if (ataque == 0) {
             mesaAtaque[op].atacarBase(t);
-            System.out.println(t.getVida());
+            System.out.println("Vida restante del nexo: "+t.getVida());
         } else if ("Ariete".equals(mesaDefensa[ataque - 1].getClass().getCanonicalName().substring(7))) {
             mesaAtaque[op].atacarUnidad((Ariete) mesaDefensa[ataque - 1]);
             if (mesaDefensa[ataque - 1].getVida() < 1) {
