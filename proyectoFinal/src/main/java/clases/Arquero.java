@@ -11,6 +11,7 @@ package clases;
  */
 public class Arquero extends Personaje{
 
+    //constructor de arquero
     public Arquero() {
         super((byte)3, (byte)5, (byte)3, (byte)2);
     }

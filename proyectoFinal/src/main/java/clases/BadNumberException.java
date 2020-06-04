@@ -9,15 +9,11 @@ package clases;
  *
  * @author Norberto
  */
-public class Hechizo extends Carta{
+public class BadNumberException extends Exception {
     
-    /**
-     * Constructor de hechizo
-     * @param costo costo de mana de la carta
-     */
-    public Hechizo(byte costo) {
-        super(costo);
+    
+     public BadNumberException(String message) {
+        super(message);
     }
     
-  
 }

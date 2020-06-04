@@ -11,6 +11,7 @@ package clases;
  */
 public class Luchador extends Personaje {
 
+    //Constructor de luchador
     public Luchador() {
         super((byte) 3, (byte) 10, (byte) 5, (byte) 3);
     }

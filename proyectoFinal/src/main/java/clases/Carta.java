@@ -10,23 +10,32 @@ package clases;
  * @author Norberto
  */
 public class Carta {
-    private byte costo;
+    private byte costo;//costo de mana de la carta
 
+    /**
+     * Constructor de carta
+     * @param costo costo de mana de la carta
+     */
     public Carta(byte costo) {
         this.costo = costo;
     }
+    
+    /**
+     * Getter de costo
+     * @return costo
+     */
     public byte getCosto() {
         return costo;
     }
 
+    /**
+     * Setter de costo 
+     * @param costo costo de mana de la carta
+     */
     public void setCosto(byte costo) {
         this.costo = costo;
     }
 
-    @Override
-    public String toString() {
-        return "Carta{" + "costo=" + costo + '}';
-    }
 
     
 }

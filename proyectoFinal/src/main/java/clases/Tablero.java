@@ -11,11 +11,16 @@ package clases;
  */
 public class Tablero {
 
-    private byte vida;
-    private byte escudo;
-    private Carta[] mano;
-    private Carta[] mesa;
+    private byte vida;//vida del tablero
+    private byte escudo;//escudo del tablero
+    private Carta[] mano;//cartas que hay en mano
+    private Carta[] mesa;//cartas que hay en la mesa
 
+    /**
+     * Constructor de tablero
+     * @param mano//cartas que hay en mano
+     * @param mesa//cartas que hay en la mesa
+     */
     public Tablero(Carta[] mano, Personaje[] mesa) {
         this.vida = 30;
         this.escudo = 0;
@@ -24,34 +29,66 @@ public class Tablero {
 
     }
 
+    /**
+     * Getter de vida
+     * @return vida
+     */
     public byte getVida() {
         return vida;
     }
 
+    /**
+     * Getter de escudo
+     * @return escudo
+     */
     public byte getEscudo() {
         return escudo;
     }
 
+    /**
+     * Getter de mano
+     * @return mano
+     */
     public Carta[] getMano() {
         return mano;
     }
 
-    public Carta[] setMesa() {
+    /**
+     * Getter de mesa
+     * @return 
+     */
+    public Carta[] getMesa() {
         return mesa;
     }
 
+    /**
+     * Setter de mesa
+     * @param vida vida del tablero
+     */
     public void setVida(byte vida) {
         this.vida = vida;
     }
 
+    /**
+     * Setter de escudo
+     * @param escudo escudo del tablero
+     */
     public void setEscudo(byte escudo) {
         this.escudo = escudo;
     }
 
+    /**
+     * Setter de mano
+     * @param mano cartas que hay en mano
+     */
     public void setMano(Carta[] mano) {
         this.mano = mano;
     }
 
+    /**
+     * Setter de mesa
+     * @param mesa cartas que hay en la mesa
+     */
     public void setMesa(Carta[] mesa) {
         this.mesa = mesa;
     }
